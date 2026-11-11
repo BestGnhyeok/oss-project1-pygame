@@ -99,8 +99,10 @@ class Game:
         self.bullets.update()
         self.enemies.update()
 
-        # TODO(F3): 총알과 적이 부딪히면 둘 다 없애고, 맞힌 적 하나당 SCORE_PER_ENEMY 점을 더할 것.
-        #           힌트: pygame.sprite.groupcollide
+        hits = pygame.sprite.groupcollide(
+            self.enemies, self.bullets, True, True
+        )
+        self.score += len(hits) * SCORE_PER_ENEMY
 
         # TODO(F4): 적이 플레이어에 닿으면 그 적을 없애고 생명(self.lives)을 1 줄일 것.
         #           힌트: pygame.sprite.spritecollide
@@ -117,7 +119,7 @@ class Game:
         """게임 오버 처리."""
         self.game_over = True
         # TODO(F5): 이번 점수가 최고 점수보다 높으면 self.high_score 를 바꾸고 save_high_score() 로 저장할 것.
-
+    
     # ---------------- 그리기 ----------------
     def draw_text(self, text, font, color, **position):
         """글자를 화면에 그린다. 예: self.draw_text("Hi", self.font, WHITE, center=(240, 320))"""
@@ -135,7 +137,9 @@ class Game:
             self.screen.blit(self.dark_shade, (0, 0))  # 게임 오버 글자가 잘 보이게
         self.screen.blit(self.hud_shade, (0, 0))  # 점수·생명 글자 뒤 어두운 띠
         self.draw_text(f"LIVES: {self.lives}", self.font, WHITE, topright=(WIDTH - 10, 10))
-        # TODO(F3): 화면 왼쪽 위에 현재 점수를 "SCORE: 120" 형태로 표시할 것.
+        self.draw_text(
+            f"SCORE: {self.score}", self.font, WHITE, topleft=(10, 10)
+        )
         if self.game_over:
             self.draw_game_over()
         pygame.display.flip()
